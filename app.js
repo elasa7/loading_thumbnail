@@ -1,9 +1,9 @@
 const wraper = document.querySelector(".skeleton-wraper");
 const jsonURL = "https://rickandmortyapi.com/api/character/";
-let startSkeletonCount = 28;
-let createdSkeletonArray = [];
+const startSkeletonCount = 20;
+const createdSkeletonArray = [];
 
-let animationDefault = {
+const animationDefault = {
   animationName: "fade",
   delayMultiple: 0.5,
   delay: 0.2,
@@ -13,74 +13,76 @@ let animationDefault = {
 };
 
 function newAnimeSetting(newSetting) {
-  if (typeof newSetting === "object") {
-    return Object.assign(animationDefault, newSetting);
-  } else {
-    return animationDefault;
-  }
+  return Object.assign({}, animationDefault, newSetting);
 }
 
-function makeSkieleton(count) {
-  for (let i = 0; i < count; i++) {
-    let skeletonWrapper = document.createElement("div");
-    let skeleton = document.createElement("div");
+function makeSkeletonItem() {
+  const skeletonWrapper = document.createElement("div");
+  const skeleton = document.createElement("div");
+  const skeletonImage = document.createElement("img");
 
-    skeletonWrapper.classList.add("skeleton-item-wrapper");
-    skeleton.classList.add("skeleton-item");
+  skeletonWrapper.classList.add("skeleton-item-wrapper");
+  skeleton.classList.add("skeleton-item");
+  skeletonImage.classList.add("skeleton-item-image");
 
-    let myNewImage = document.createElement("img");
-    myNewImage.classList.add("skeleton-item-image");
-    skeletonWrapper.appendChild(myNewImage);
+  skeletonWrapper.appendChild(skeletonImage);
+  skeletonWrapper.appendChild(skeleton);
+  wraper.appendChild(skeletonWrapper);
 
-    skeletonWrapper.appendChild(skeleton);
-    setAnimation(skeleton, newAnimeSetting(), i);
-    createdSkeletonArray.push(skeleton);
-    wraper.appendChild(skeletonWrapper);
-
-    if (i === count - 1) {
-      createdSkeletonArray[count - 1].addEventListener("animationend", () => {
-        fadeAll();
-      });
-    }
-  }
+  return { skeleton, skeletonImage };
 }
 
 function setAnimation(element, animSett, delayMultiple = 0) {
-  element.style.animation = `${animSett.animationName} ${animSett.delay}s  ${animSett.easing} ${animSett.type}`;
+  element.style.animation = `${animSett.animationName} ${animSett.delay}s ${animSett.easing} ${animSett.type}`;
   element.style.animationDelay = `${delayMultiple * animSett.stagDealy}s`;
 }
 
-function fadeAll(params) {
-  for (let i = 0; i < startSkeletonCount; i++) {
-    if (createdSkeletonArray[i].tagName.toLowerCase() == "div") {
-      setAnimation(createdSkeletonArray[i], newAnimeSetting({ animationName: "fadeAll", delay: 2, type: "infinite" }));
-    }
-  }
+function fadeAllSkeletons() {
+  createdSkeletonArray.forEach((skeleton) => {
+    setAnimation(skeleton.skeleton, newAnimeSetting({ animationName: "fadeAll", delay: 2, type: "infinite" }));
+  });
 }
 
-function setImages(ImageUrl) {
-  let toReplace = document.querySelectorAll(".skeleton-item-image");
-  toReplace.forEach((element, index) => {
-    element.src = ImageUrl[index].image;
+async function setImages(imageUrls) {
+  const skeletonImages = document.querySelectorAll(".skeleton-item-image");
+
+  skeletonImages.forEach((element, index) => {
+    element.src = imageUrls[index].image;
     element.addEventListener("load", () => {
       element.style.display = "inline-block";
-      createdSkeletonArray[index].style.display = "none";
+      createdSkeletonArray[index].skeleton.style.display = "none";
     });
   });
 }
 
-async function getJson(params) {
+async function fetchData(url) {
   try {
-    let myJson = await fetch(params);
-    if (myJson.status == 200) {
-      let myJsonData = await myJson.json();
-      setImages(myJsonData.results);
-    } else {
-      throw new Error("Fetching json faild");
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error("Fetching JSON failed");
     }
+    const data = await response.json();
+    return data.results;
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    return [];
   }
 }
-makeSkieleton(startSkeletonCount);
-getJson(jsonURL);
+
+async function initialize() {
+  for (let i = 0; i < startSkeletonCount; i++) {
+    const { skeleton, skeletonImage } = makeSkeletonItem();
+    setAnimation(skeleton, newAnimeSetting(), i);
+    createdSkeletonArray.push({ skeleton, skeletonImage });
+    if (startSkeletonCount - 1 === i) {
+      skeleton.addEventListener("animationend", () => {
+        fadeAllSkeletons();
+      });
+    }
+  }
+
+  const imageUrls = await fetchData(jsonURL);
+  setImages(imageUrls);
+}
+
+initialize();

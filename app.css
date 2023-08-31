@@ -1,0 +1,47 @@
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.skeleton-wraper {
+  width: 90%;
+  height: auto;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+}
+
+.skeleton-item {
+  width: 200px;
+  height: 200px;
+  background-color: rgb(210, 186, 157);
+  opacity: 0;
+}
+.skeleton-wraper img {
+  width: 200px;
+  max-height: 200px;
+  object-fit: cover;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeAll {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}

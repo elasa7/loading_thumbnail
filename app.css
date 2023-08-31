@@ -14,6 +14,10 @@
   flex-wrap: wrap;
   gap: 0.5em;
 }
+.skeletonWrapper {
+  width: 200px;
+  height: 200px;
+}
 
 .skeleton-item {
   width: 200px;
@@ -21,10 +25,11 @@
   background-color: rgb(210, 186, 157);
   opacity: 0;
 }
-.skeleton-wraper img {
+.skeleton-item-wrapper img {
   width: 200px;
-  max-height: 200px;
+  height: auto;
   object-fit: cover;
+  display: none;
 }
 
 @keyframes fade {

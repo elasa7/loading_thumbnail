@@ -22,11 +22,20 @@ function newAnimeSetting(newSetting) {
 
 function makeSkieleton(count) {
   for (let i = 0; i < count; i++) {
+    let skeletonWrapper = document.createElement("div");
     let skeleton = document.createElement("div");
+
+    skeletonWrapper.classList.add("skeleton-item-wrapper");
     skeleton.classList.add("skeleton-item");
+
+    let myNewImage = document.createElement("img");
+    myNewImage.classList.add("skeleton-item-image");
+    skeletonWrapper.appendChild(myNewImage);
+
+    skeletonWrapper.appendChild(skeleton);
     setAnimation(skeleton, newAnimeSetting(), i);
     createdSkeletonArray.push(skeleton);
-    wraper.appendChild(skeleton);
+    wraper.appendChild(skeletonWrapper);
 
     if (i === count - 1) {
       createdSkeletonArray[count - 1].addEventListener("animationend", () => {
@@ -41,31 +50,23 @@ function setAnimation(element, animSett, delayMultiple = 0) {
   element.style.animationDelay = `${delayMultiple * animSett.stagDealy}s`;
 }
 
-makeSkieleton(startSkeletonCount);
-
 function fadeAll(params) {
   for (let i = 0; i < startSkeletonCount; i++) {
-    if (wraper.children[i].tagName.toLowerCase() == "div") {
-      setAnimation(wraper.children[i], newAnimeSetting({ animationName: "fadeAll", delay: 2, type: "infinite" }));
+    if (createdSkeletonArray[i].tagName.toLowerCase() == "div") {
+      setAnimation(createdSkeletonArray[i], newAnimeSetting({ animationName: "fadeAll", delay: 2, type: "infinite" }));
     }
   }
 }
 
-// function setImages() {
-//   let myNewImage = document.createElement("img");
-//   myNewImage.src = "./img/ew.jpeg";
-//   let toReplace = document.querySelector(".skeleton-item");
-//   toReplace.style = "none";
-//   wraper.replaceChild(myNewImage, toReplace);
-// }
-
 function setImages(ImageUrl) {
-  console.log(ImageUrl);
-  let myNewImage = document.createElement("img");
-  myNewImage.src = ImageUrl[0].image;
-  let toReplace = document.querySelector(".skeleton-item");
-  toReplace.style = "none";
-  wraper.replaceChild(myNewImage, toReplace);
+  let toReplace = document.querySelectorAll(".skeleton-item-image");
+  toReplace.forEach((element, index) => {
+    element.src = ImageUrl[index].image;
+    element.addEventListener("load", () => {
+      element.style.display = "inline-block";
+      createdSkeletonArray[index].style.display = "none";
+    });
+  });
 }
 
 async function getJson(params) {
@@ -81,5 +82,5 @@ async function getJson(params) {
     console.log(error);
   }
 }
-
+makeSkieleton(startSkeletonCount);
 getJson(jsonURL);

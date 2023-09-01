@@ -7,12 +7,15 @@
 }
 
 body {
+  display: flex;
+  flex-direction: column;
+  gap: 2em;
+  align-items: center;
   width: 100%;
 }
 
 .load-more-btn {
   display: inline-block;
-  margin: 0 auto;
   background-color: #222;
   padding: 1em 2em;
   text-decoration: none;
@@ -22,7 +25,6 @@ body {
 .skeleton-wraper {
   width: 90%;
   height: auto;
-  margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
   gap: 0.5em;
@@ -43,6 +45,11 @@ body {
   height: auto;
   object-fit: cover;
   display: none;
+  opacity: 0;
+}
+
+.fadeImage {
+  animation: fade 1s ease forwards;
 }
 
 @keyframes fade {

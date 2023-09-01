@@ -54,7 +54,7 @@ function setAnimation(element, animSett, delayMultiple = 0) {
 // Function to apply an animation to fade out all skeleton elements.
 function fadeAllSkeletons() {
   createdSkeletonArray.forEach((skeleton) => {
-    setAnimation(skeleton.skeleton, newAnimeSetting({ animationName: "fadeAll", delay: 2, type: "infinite" }));
+    setAnimation(skeleton, newAnimeSetting({ animationName: "fadeAll", delay: 2, type: "infinite" }));
   });
 }
 
